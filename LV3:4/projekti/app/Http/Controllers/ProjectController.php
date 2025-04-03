@@ -13,7 +13,6 @@ class ProjectController extends Controller
     {
         $userId = Auth::id();
 
-        // Dohvati projekte na kojima je korisnik voditelj ili član
         $projects = Project::where('leader_id', $userId)
             ->orWhereHas('members', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
