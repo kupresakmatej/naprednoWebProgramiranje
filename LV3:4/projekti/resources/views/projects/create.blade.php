@@ -67,7 +67,6 @@
 </div>
 
 <script>
-    // Dodavanje novih polja za unos poslova
     document.getElementById('addTask').addEventListener('click', function() {
         const newTaskInput = document.createElement('input');
         newTaskInput.type = 'text';
