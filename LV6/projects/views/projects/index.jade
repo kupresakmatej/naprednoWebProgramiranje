@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  h1 Projekti
+  
+  a.btn.btn-success(href='/projects/new') + Dodaj novi projekt
+  
+  if projects.length
+    div.project-list
+      each project in projects
+        div.project-card
+          h2.project-title
+            a(href=`/projects/${project._id}`)= project.name
+          div.project-dates
+            span #{project.startDate.toLocaleDateString("hr")} - #{project.endDate.toLocaleDateString("hr")}
+            a.btn.btn-success(href=`/projects/${project._id}`) Pregled
+            a.btn.btn-success(href=`/projects/${project._id}/edit`) Uredi
+          div.project-actions
+            form(action=`/projects/${project._id}?_method=DELETE`, method='POST', style='display:inline')
+              button.btn.btn-danger(type='submit') Obriši
+  else
+    div.empty-state
+      p Nema projekata.
+      p 
+        a.btn.btn-success(href='/projects/new') Započnite dodavanjem novog projekta

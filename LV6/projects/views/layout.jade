@@ -1,0 +1,24 @@
+doctype html
+html(lang="hr")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Upravljanje projektima
+    link(rel="stylesheet", href="/stylesheets/style.css")
+  body
+    header.header
+      div.header-content
+        h1.site-title
+          a(href="/") Upravljanje projektima
+        nav.nav-links
+          a(href="/projects") Projekti
+          a(href="/projects/new") Novi projekt
+    
+    main.container
+      block content
+    
+    footer.footer
+      div.footer-content
+        p &copy; 2025 Sustav za upravljanje projektima
+    
+    script(src="/javascripts/main.js")

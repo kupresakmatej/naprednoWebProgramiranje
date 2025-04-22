@@ -1,0 +1,39 @@
+extends ../layout
+
+block content
+  h1 Novi projekt
+  
+  if errors
+    ul.errors
+      each error in errors
+        li= error.msg
+  
+  form(action='/projects', method='POST')
+    div.form-group
+      label(for="name") Naziv:
+      input(type='text', name='name', id="name", required)
+    
+    div.form-group
+      label(for="description") Opis:
+      textarea(name='description', id="description", rows="4")
+    
+    div.form-group
+      label(for="price") Cijena (e):
+      input(type='number', name='price', id="price", min="0", step="0.01")
+    
+    div.form-group
+      label(for="tasks") Obavljeni poslovi (odvojeni zarezima):
+      input(type='text', name='tasks', id="tasks")
+    
+    div.form-row
+      div.form-group
+        label(for="startDate") Datum početka:
+        input(type='date', name='startDate', id="startDate", required)
+      
+      div.form-group
+        label(for="endDate") Datum završetka:
+        input(type='date', name='endDate', id="endDate", required)
+    
+    div.form-actions
+      button.btn.btn-success(type='submit') Spremi projekt
+      a.btn(href='/projects') Odustani

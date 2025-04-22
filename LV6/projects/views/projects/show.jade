@@ -1,0 +1,44 @@
+extends ../layout
+
+block content
+  div.project-header
+    h1= project.name
+    a.btn(href='/projects') &larr; Natrag na projekte
+  
+  div.project-details
+    div.detail-item
+      span.detail-label Opis:
+      span #{project.description}
+    
+    div.detail-item
+      span.detail-label Cijena:
+      span #{project.price} e
+    
+    div.detail-item
+      span.detail-label Obavljeni poslovi:
+      span #{project.tasks.join(', ')}
+    
+    div.detail-item
+      span.detail-label Datum početka:
+      span #{project.startDate.toLocaleDateString("hr")}
+    
+    div.detail-item
+      span.detail-label Datum završetka:
+      span #{project.endDate.toLocaleDateString("hr")}
+  
+  div.team-section
+    h2 Članovi tima
+    a.btn.btn-success(href=`/projects/${project._id}/team/new`) + Dodaj člana tima
+    
+    if project.teamMembers.length
+      div.team-list
+        each member in project.teamMembers
+          div.team-member
+            div
+              span.member-name #{member.name} 
+              span.member-role (#{member.role})
+            div.member-actions
+              form(action=`/projects/${project._id}/team/${member._id}?_method=DELETE`, method='POST', style='display:inline')
+                button.btn.btn-sm.btn-danger(type='submit') Ukloni
+    else
+      p Nema članova tima.

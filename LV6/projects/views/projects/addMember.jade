@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  h1 Dodaj člana tima za #{project.name}
+  
+  if errors
+    ul.errors
+      each error in errors
+        li= error.msg
+  
+  form(action=`/projects/${project._id}/team`, method='POST')
+    div.form-group
+      label(for="name") Ime:
+      input(type='text', name='name', id="name", required)
+    
+    div.form-group
+      label(for="role") Uloga:
+      input(type='text', name='role', id="role", required)
+    
+    div.form-actions
+      button.btn.btn-success(type='submit') Dodaj člana
+      a.btn(href=`/projects/${project._id}`) Odustani
