@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+  h1 Registracija
+  
+  if errors
+    ul.errors
+      each error in errors
+        li= error.msg
+  
+  form(action='/users/register', method='POST')
+    div.form-group
+      label(for="name") Ime:
+      input(type='text', name='name', id="name", required)
+    
+    div.form-group
+      label(for="email") Email:
+      input(type='email', name='email', id="email", required)
+    
+    div.form-group
+      label(for="password") Lozinka:
+      input(type='password', name='password', id="password", required)
+    
+    div.form-actions
+      button.btn.btn-success(type='submit') Registriraj se
+      a.btn(href='/users/login') Već imam račun

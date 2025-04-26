@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  h1 Arhiva projekata
+  
+  if projects.length
+    div.project-list
+      each project in projects
+        div.project-card
+          h2.project-title
+            a(href=`/projects/${project._id}`)= project.name
+          div.project-dates
+            span #{project.startDate.toLocaleDateString("hr")} - #{project.endDate.toLocaleDateString("hr")}
+          div.project-actions
+            a.btn.btn-success(href=`/projects/${project._id}`) Pregled
+  else
+    div.empty-state
+      p Nemate arhiviranih projekata.

@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  h1 Moji projekti (član)
+  
+  if projects.length
+    div.project-list
+      each project in projects
+        div.project-card
+          h2.project-title
+            a(href=`/projects/${project._id}`)= project.name
+          div.project-dates
+            span #{project.startDate.toLocaleDateString("hr")} - #{project.endDate.toLocaleDateString("hr")}
+          div.project-actions
+            a.btn.btn-success(href=`/projects/${project._id}`) Pregled
+            a.btn.btn-success(href=`/projects/${project._id}/edit-tasks`) Uredi poslove
+  else
+    div.empty-state
+      p Niste član nijednog projekta.

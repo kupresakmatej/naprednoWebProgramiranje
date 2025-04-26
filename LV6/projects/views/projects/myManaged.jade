@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+  h1 Moji projekti (voditelj)
+  
+  if projects.length
+    div.project-list
+      each project in projects
+        div.project-card
+          h2.project-title
+            a(href=`/projects/${project._id}`)= project.name
+          div.project-dates
+            span #{project.startDate.toLocaleDateString("hr")} - #{project.endDate.toLocaleDateString("hr")}
+          div.project-actions
+            a.btn.btn-success(href=`/projects/${project._id}`) Pregled
+            a.btn.btn-success(href=`/projects/${project._id}/edit`) Uredi
+            form(action=`/projects/${project._id}?_method=DELETE`, method='POST', style='display:inline')
+              button.btn.btn-danger(type='submit') Obriši
+  else
+    div.empty-state
+      p Nemate projekata na kojima ste voditelj.
+      p 
+        a.btn.btn-success(href='/projects/new') Kreirajte novi projekt
