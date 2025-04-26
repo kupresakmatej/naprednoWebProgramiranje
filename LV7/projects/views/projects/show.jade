@@ -29,11 +29,11 @@ block content
   div.project-actions
     if !project.isArchived
       if project.manager._id.toString() === currentUser.id
-        form(action=`/projects/${project._id}/archive`, method='POST', style='display:inline')
+        form(action=`/projects/${project._id}/archive`, method='POST')
           button.btn.btn-danger(type='submit') Arhiviraj projekt
-        a.btn.btn-success(href=`/projects/${project._id}/edit-tasks`) Uredi poslove
+        a.btn-edit(href=`/projects/${project._id}/edit-tasks`) Uredi poslove
       else if project.teamMembers.some(member => member._id.toString() === currentUser.id)
-        a.btn.btn-success(href=`/projects/${project._id}/edit-tasks`) Uredi poslove
+        a.btn-edit(href=`/projects/${project._id}/edit-tasks`) Uredi poslove
 
   div.team-section
     h2 Članovi tima
