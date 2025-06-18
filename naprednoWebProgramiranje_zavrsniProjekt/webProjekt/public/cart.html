@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cartStyles.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">KUPRESHOP</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="/games">Shop</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="checkout">
+        <h1 class="cart-title">Shopping Cart</h1>
+        <a class="checkout-button" id="checkoutButton" href="/checkout">Checkout</a>
+    </div>
+
+    <div id="login-message" style="display: none; text-align: center; margin-top: 50px;">
+        <p>Please log in to check your cart.</p>
+    </div>
+
+    <div id="empty-cart-message" style="display: none; text-align: center; margin-top: 50px;">
+        <p>Your cart is empty.</p>
+    </div>
+
+    <ul class="cart-items" id="cartItems">
+    </ul>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="https://www.facebook.com" target="_blank">
+                    <img src="images/facebookIcon.png" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com" target="_blank">
+                    <img src="images/instagramIcon.png" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com" target="_blank">
+                    <img src="images/linkedinIcon.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        fetch('/isLoggedIn')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.loggedIn) {
+                    document.getElementById('login-message').style.display = 'block';
+                    const button = document.getElementById("checkoutButton");
+                    button.style.display = 'none';
+                } else {
+                    fetchCartItems();
+                }
+            })
+            .catch(error => console.error('Error fetching login status:', error));
+
+        function fetchCartItems() {
+            fetch('/fetchCartItems')
+                .then(response => response.json())
+                .then(data => {
+                    const cartItems = document.getElementById('cartItems');
+                    cartItems.innerHTML = '';
+
+                    if (data.length === 0) {
+                        const button = document.getElementById("checkoutButton");
+                        document.getElementById('empty-cart-message').style.display = 'block';
+                        button.style.display = 'none';
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        fetch(`/fetchGameById/${item.gameID}`)
+                            .then(response => response.json())
+                            .then(game => {
+                                const listItem = document.createElement('li');
+                                listItem.className = 'cart-item';
+
+                                const itemName = document.createElement('span');
+                                itemName.textContent = `${game.gameName} - x${item.quantity}`;
+
+                                const itemInfo = document.createElement('div');
+                                itemInfo.className = 'item-info';
+
+                                const itemPrice = document.createElement('span');
+                                itemPrice.textContent = (game.gamePrice * item.quantity) + 'e';
+
+                                const quantityControls = document.createElement('div');
+                                quantityControls.className = 'quantity-controls';
+
+                                const increaseButton = document.createElement('button');
+                                increaseButton.textContent = '+';
+                                increaseButton.onclick = () => updateCartQuantity(item.cart_itemID, 1);
+
+                                const decreaseButton = document.createElement('button');
+                                decreaseButton.textContent = '-';
+                                decreaseButton.onclick = () => updateCartQuantity(item.cart_itemID, -1);
+
+                                quantityControls.appendChild(increaseButton);
+                                quantityControls.appendChild(decreaseButton);
+                                itemInfo.appendChild(itemPrice);
+                                itemInfo.appendChild(quantityControls);
+
+                                listItem.appendChild(itemName);
+                                listItem.appendChild(itemInfo);
+
+                                cartItems.appendChild(listItem);
+                            })
+                            .catch(error => console.error('Error fetching game details:', error));
+                    });
+                })
+                .catch(error => console.error('Error fetching cart items:', error));
+        }
+
+        function updateCartQuantity(cartItemId, change) {
+            fetch(`/updateCartQuantity/${cartItemId}/${change}`, {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Quantity updated successfully');
+                        fetchCartItems()
+                    } else {
+                        console.error('Failed to update quantity');
+                    }
+                })
+                .catch(error => console.error('Error updating quantity:', error));
+        }
+    </script>
+</body>
+
+</html>

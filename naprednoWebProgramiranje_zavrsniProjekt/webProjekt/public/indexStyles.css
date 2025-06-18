@@ -1,0 +1,411 @@
+body {
+    margin: 0;
+    font-family: 'Antonio', sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: #000;
+}
+
+.logo {
+    font-size: 3em;
+    font-weight: 700;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+nav ul li {
+    margin: 0 1em;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.125em;
+}
+
+nav ul li a:hover {
+    filter: invert(50%);
+}
+
+main {
+    flex-grow: 1;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    padding: 0 3.125em;
+}
+
+.main-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.image-placeholder {
+    width: 40em;
+    height: 40em;
+    border-radius: 90px 0 0 0;
+    margin-left: 1em;
+    overflow: hidden;
+}
+
+.image-placeholder img.rounded-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 90px 0 0 0;
+}
+
+.text-container {
+    width: 50%;
+    margin-left: 1.25em;
+}
+
+.welcome-text-title {
+    font-size: 2.25em;
+    font-weight: 400;
+    margin-top: -0.25em;
+    margin-bottom: 0.5em;
+}
+
+.welcome-text-body {
+    font-family: 'Lora', serif;
+    font-size: 1.125em;
+    margin-top: 0.625em;
+}
+
+.games-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3em;
+}
+
+.game-box {
+    width: 13.75em;
+    height: 20em;
+    border-radius: 15px;
+    border-style: solid;
+    border-width: 1px;
+    overflow: hidden;
+}
+
+.game-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.left-tilt {
+    transform: rotate(-15deg);
+    margin-right: -6.25em;
+    margin-top: 2.5em;
+    z-index: 1;
+}
+
+.center {
+    z-index: 2;
+}
+
+.right-tilt {
+    transform: rotate(15deg);
+    margin-left: -6.25em;
+    margin-top: 2.5em;
+    z-index: 1;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3.75em;
+    background-color: #000;
+    border-top: 1px solid #fff;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: flex-end;
+    width: 90%;
+}
+
+.social-icons a {
+    margin-left: 1em;
+    margin-top: 1em;
+}
+
+.social-icons img {
+    width: 1.5em;
+    height: 1.5em;
+    filter: invert(100%);
+}
+
+@media screen and (max-width: 768px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 2em;
+    }
+
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-placeholder {
+        width: 70%;
+        height: 70%;
+        border-radius: 90px 0 0 0;
+        overflow: hidden;
+    }
+
+    .text-container {
+        width: 90%;
+        text-align: center;
+        margin-left: 0;
+        margin-top: 2em;
+        padding: 0 5em;
+    }
+
+    .games-container {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 2em;
+    }
+
+    .game-box {
+        margin: 1em 0;
+    }
+
+    .left-tilt, .right-tilt, .center {
+        transform: none;
+        margin: 1em 0;
+    }
+
+    .footer-content {
+        justify-content: center;
+        width: 100%;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 2.5em;
+    }
+
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-placeholder {
+        width: 60%;
+        height: 60%;
+        border-radius: 90px 0 0 0;
+        overflow: hidden;
+        margin-left: 0;
+    }
+
+    .text-container {
+        width: 80%;
+        text-align: center;
+        margin-left: 0;
+        margin-top: 1.5em;
+        padding: 0 4em;
+    }
+
+    .games-container {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 2em;
+    }
+
+    .game-box {
+        width: 16em;
+        height: 22em;
+        margin: 1em 0;
+    }
+
+    .left-tilt, .right-tilt, .center {
+        transform: none;
+        margin: 1em 0;
+    }
+
+    .footer-content {
+        justify-content: center;
+        width: 100%;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    .logo {
+        font-size: 3em;
+    }
+
+    nav ul li a {
+        font-size: 1.25em;
+    }
+
+    .welcome-text-title {
+        font-size: 2.5em;
+    }
+
+    .welcome-text-body {
+        font-size: 1.25em;
+    }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+    main {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 0 1.5em;
+    }
+
+    .main-content {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .image-placeholder {
+        width: 30em;
+        height: 30em;
+        border-radius: 90px 0 0 0;
+        margin-left: 1em;
+    }
+
+    .text-container {
+        width: 60%;
+        margin-left: 1em;
+    }
+
+    .welcome-text-title {
+        font-size: 2em;
+    }
+
+    .welcome-text-body {
+        font-size: 1.125em;
+    }
+
+    .games-container {
+        flex-direction: row;
+        align-items: center;
+        margin-top: 2em;
+    }
+
+    .game-box {
+        width: 12em;
+        height: 18em;
+        margin: 0 1em;
+    }
+
+    .left-tilt, .right-tilt, .center {
+        transform: none;
+        margin: 0;
+    }
+
+    .footer-content {
+        justify-content: flex-end;
+        width: 90%;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    .logo {
+        font-size: 3em;
+    }
+
+    nav ul li a {
+        font-size: 1.25em;
+    }
+
+    .social-icons img {
+        width: 1.25em;
+        height: 1.25em;
+    }
+}
+
+
+@media screen and (min-width: 1800px) {
+    .logo {
+        font-size: 4em;
+    }
+
+    nav ul li a {
+        font-size: 1.5em;
+    }
+
+    .image-placeholder {
+        width: 50em;
+        height: 50em;
+    }
+
+    .text-container {
+        width: 60%;
+        margin-left: 2em;
+    }
+
+    .welcome-text-title {
+        font-size: 3em;
+    }
+
+    .welcome-text-body {
+        font-size: 1.5em;
+    }
+
+    .games-container {
+        margin-top: 3em;
+    }
+
+    .game-box {
+        width: 18em;
+        height: 26em;
+    }
+
+    .left-tilt {
+        margin-right: -8em;
+        margin-top: 3em;
+    }
+
+    .right-tilt {
+        margin-left: -8em;
+        margin-top: 3em;
+    }
+
+    .footer-content {
+        width: 80%;
+    }
+}

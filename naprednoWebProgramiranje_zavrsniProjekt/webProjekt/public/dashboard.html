@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboardStyles.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">KUPRESHOP</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="/games">Shop</a></li>
+            </ul>
+
+            <div class="cart-container">
+                <div class="login-container" id="login-container">
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <aside id="controlPanel">
+            <button onclick="fetchDashboardInfo('users')">Users</button>
+            <button onclick="fetchDashboardInfo('games')">Games</button>
+            <button id="manageGamesBtn" onclick="toggleManageGames()" style="display: none;">Manage Games</button>
+        </aside>
+
+        <main id="dataContainer">
+        </main>
+
+        <div class="newGameForm" id="addGameForm" style="display: none;">
+            <button class="closeButton" onclick="toggleAddGameForm()">Close</button>
+            <h2>Add New Game</h2>
+            <form id="gameForm">
+                <label for="gameName">Game Name:</label>
+                <input type="text" id="gameName" name="gameName" required><br>
+                <label for="gamePrice">Game Price:</label>
+                <input type="number" id="gamePrice" name="gamePrice" required><br>
+                <label for="gameImage">Game Image URL:</label>
+                <input type="text" id="gameImage" name="gameImage" required><br>
+                <button class="addGameButton" type="button" onclick="addGame()">Add Game</button>
+            </form>
+        </div>
+
+        <div class="newGameForm" id="editGameForm" style="display: none;">
+            <button class="closeButton" onclick="toggleEditGameForm()">Close</button>
+            <h2>Edit Game</h2>
+            <form id="editGameFormContent">
+                <input type="hidden" id="editGameId" name="gameId">
+                <label for="editGameName">Game Name:</label>
+                <input type="text" id="editGameName" name="gameName" required><br>
+                <label for="editGamePrice">Game Price:</label>
+                <input type="number" id="editGamePrice" name="gamePrice" required><br>
+                <label for="editGameImage">Game Image URL:</label>
+                <input type="text" id="editGameImage" name="gameSplashImage" required><br>
+                <button class="addGameButton" type="button" onclick="editGame()">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="https://www.facebook.com" target="_blank">
+                    <img src="images/facebookIcon.png" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com" target="_blank">
+                    <img src="images/instagramIcon.png" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com" target="_blank">
+                    <img src="images/linkedinIcon.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        fetch('/isLoggedIn')
+            .then(response => response.json())
+            .then(data => {
+                const loginContainer = document.getElementById('login-container');
+
+                const loginLink = document.createElement('a');
+                loginLink.className = "login-text";
+                if (data.loggedIn) {
+                    console.log("Logged in");
+
+                    loginLink.href = '/logout';
+                    loginLink.textContent = 'Logout';
+                } else {
+                    loginLink.href = 'login.html';
+                    loginLink.textContent = 'Login';
+                }
+                loginContainer.appendChild(loginLink);
+            })
+            .catch(error => console.error('Error fetching login status:', error));
+
+        function fetchDashboardInfo(dataType) {
+            fetch(`/fetch${dataType.charAt(0).toUpperCase() + dataType.slice(1)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const dataContainer = document.getElementById('dataContainer');
+                    dataContainer.innerHTML = '';
+
+                    document.getElementById('manageGamesBtn').style.display = (dataType === 'games') ? 'block' : 'none';
+
+                    if (dataType === 'games') {
+                        const table = document.createElement('table');
+                        table.className = 'game-table';
+                        const headerRow = table.insertRow();
+                        for (const key in data[0]) {
+                            const headerCell = document.createElement('th');
+                            headerCell.textContent = key;
+                            headerRow.appendChild(headerCell);
+                        }
+                        const actionHeaderCell = document.createElement('th');
+                        actionHeaderCell.textContent = 'Actions';
+                        headerRow.appendChild(actionHeaderCell);
+
+                        data.forEach(game => {
+                            console.log('Game:', game);
+                            const row = table.insertRow();
+                            for (const key in game) {
+                                console.log('Key:', key);
+                                const cell = row.insertCell();
+                                if (key === 'gameSplashImage') {
+                                    const truncatedUrl = game[key].length > 20 ? game[key].substring(0, 20) + '...' : game[key];
+                                    console.log('Truncated URL:', truncatedUrl);
+                                    cell.textContent = truncatedUrl;
+                                    cell.title = game[key];
+                                } else {
+                                    cell.textContent = game[key];
+                                }
+                            }
+                            const actionCell = row.insertCell();
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'Delete';
+                            deleteButton.className = "addGameButton";
+                            deleteButton.onclick = () => deleteGame(game.id);
+                            actionCell.appendChild(deleteButton);
+
+                            const editButton = document.createElement('button');
+                            editButton.textContent = 'Edit';
+                            editButton.className = "addGameButton";
+                            editButton.onclick = () => openEditGameForm(game);
+                            actionCell.appendChild(editButton);
+                        });
+
+                        dataContainer.appendChild(table);
+                    } else if (dataType === 'users') {
+                        const table = document.createElement('table');
+                        table.className = 'user-table';
+                        const headerRow = table.insertRow();
+                        ['Username', 'Name', 'Surname', 'Email', 'isAdmin'].forEach(header => {
+                            const headerCell = document.createElement('th');
+                            headerCell.textContent = header;
+                            headerRow.appendChild(headerCell);
+                        });
+                        data.forEach(user => {
+                            const row = table.insertRow();
+                            const { username, name, surname, email, isAdmin } = user;
+                            [username, name, surname, email, isAdmin].forEach(value => {
+                                const cell = row.insertCell();
+                                cell.textContent = value;
+                            });
+                            const actionCell = row.insertCell();
+                            const toggleAdminButton = document.createElement('button');
+                            toggleAdminButton.className = "toggle-admin-button"
+                            toggleAdminButton.textContent = isAdmin ? 'Revoke Admin' : 'Grant Admin';
+                            toggleAdminButton.onclick = () => toggleAdminStatus(user.id, !isAdmin);
+                            actionCell.appendChild(toggleAdminButton);
+                        });
+                        dataContainer.appendChild(table);
+                    }
+                })
+                .catch(error => console.error(`Error fetching ${dataType}:`, error));
+        }
+
+        document.getElementById('dataContainer').addEventListener('change', (event) => {
+            fetchDashboardInfo(event.target.value);
+        });
+
+        function toggleManageGames() {
+            const form = document.getElementById('addGameForm');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        function toggleAddGameForm() {
+            const form = document.getElementById('addGameForm');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        function toggleEditGameForm() {
+            const form = document.getElementById('editGameForm');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        function openEditGameForm(game) {
+            document.getElementById('editGameId').value = game.id;
+            document.getElementById('editGameName').value = game.gameName;
+            document.getElementById('editGamePrice').value = game.gamePrice;
+            document.getElementById('editGameImage').value = game.gameSplashImage;
+            toggleEditGameForm();
+        }
+
+        function addGame() {
+            const gameForm = document.getElementById('gameForm');
+            const gameData = {
+                gameName: gameForm.elements.gameName.value,
+                gamePrice: gameForm.elements.gamePrice.value,
+                gameImage: gameForm.elements.gameImage.value
+            };
+
+            fetch('/addGame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(gameData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    toggleAddGameForm();
+                    fetchDashboardInfo('games');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function editGame() {
+            const gameForm = document.getElementById('editGameFormContent');
+            const gameId = document.getElementById('editGameId').value;
+            const gameData = {
+                gameName: gameForm.elements.gameName.value,
+                gamePrice: parseFloat(gameForm.elements.gamePrice.value),
+                gameImage: gameForm.elements.gameSplashImage.value
+            };
+
+            console.log('Sending game data:', gameData);
+
+            fetch(`/editGame/${gameId}`, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(gameData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                toggleEditGameForm();
+                fetchDashboardInfo('games');
+            })
+            .catch((error) => {
+                console.error('Error:', error.message);
+            });
+    }
+
+        function deleteGame(gameId) {
+            fetch(`/deleteGame/${gameId}`, {
+                method: 'DELETE'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    fetchDashboardInfo('games');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function toggleAdminStatus(userId, isAdmin) {
+            fetch(`/toggleAdmin/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ isAdmin })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    fetchDashboardInfo('users');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="loginStlyes.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">KUPRESHOP</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="/games">Shop</a></li>
+            </ul>
+
+            <div class="cart-container">
+                <a href="/cart">
+                    <img src="images/cartIcon.png" alt="Cart" class="cart-icon">
+                </a>
+
+                <div class="login-container">
+                    <a href="#">
+                        <a href="#" alt="Login" class="login-text" id="login-text">Login</a>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="main-content">
+            <div class="text-container">
+                <div class="login-container-body">
+                    <div class="login-form">
+                        <h1 class="form-title">Login</h1>
+                        <form id="loginForm">
+                            <div class="form-field">
+                                <input type="text" id="username" name="username" placeholder="Username..." required>
+                            </div>
+                            <div class="form-field">
+                                <input type="password" id="password" name="password" placeholder="Password..." required>
+                            </div>
+                            <div class="button-field">
+                                <button type="submit" class="login-button">Login</button>
+                            </div>
+                            <p class="signup-text">Not yet signed up? <a href="register.html">Sign up</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="https://www.facebook.com" target="_blank">
+                    <img src="images/facebookIcon.png" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com" target="_blank">
+                    <img src="images/instagramIcon.png" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com" target="_blank">
+                    <img src="images/linkedinIcon.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('loginForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    alert('Login successful!');
+                    window.location.href = '/games';
+                } else {
+                    const error = await response.text();
+                    alert(`Login failed: ${error}`);
+                }
+            });
+
+            checkLoginStatus();
+        });
+
+
+        async function checkLoginStatus() {
+            const response = await fetch('/isLoggedIn');
+            const result = await response.json();
+
+            const loginText = document.getElementById('login-text');
+            if (result.loggedIn) {
+                loginText.textContent = `Welcome, ${result.user.username}`;
+                loginText.href = 'games.html';
+            } else {
+                loginText.textContent = 'Login';
+                loginText.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="gamesStyles.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">KUPRESHOP</div>
+            <nav>
+                <div class="hamburger" id="hamburger">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="/games">Shop</a></li>
+                    <li class="cart-container">
+                        <span id="cart-count" class="cart-count">0</span>
+                        <a href="/cart">
+                            <img src="images/cartIcon.png" alt="Cart" class="cart-icon">
+                        </a>
+                    </li>
+                    <li id="dashboard-link"></li>
+                </ul>
+                <div class="login-container" id="login-container"></div>
+            </nav>
+        </div>
+    </header>
+    <div class="main-container" id="gameDetails"></div>
+    <div class="main-container">
+        <button class="back-button" onclick="window.location.href='/games'">Back to Shop</button>
+        <div id="gameDetails"></div>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="https://www.facebook.com" target="_blank">
+                    <img src="images/facebookIcon.png" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com" target="_blank">
+                    <img src="images/instagramIcon.png" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com" target="_blank">
+                    <img src="images/linkedinIcon.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+            const loginContainer = document.getElementById('login-container');
+            const dashboardLinkContainer = document.getElementById('dashboard-link');
+            const gameDetails = document.getElementById('gameDetails');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('toggle');
+                navLinks.classList.toggle('show');
+            });
+
+            fetch('/isLoggedIn')
+                .then(response => response.json())
+                .then(data => {
+                    const loginLink = document.createElement('a');
+                    loginLink.className = "login-text";
+                    if (data.loggedIn) {
+                        loginLink.href = '/logout';
+                        loginLink.textContent = 'Logout';
+                    } else {
+                        loginLink.href = 'login.html';
+                        loginLink.textContent = 'Login';
+                    }
+                    loginContainer.appendChild(loginLink);
+
+                    fetch('/isAdmin')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.isAdmin) {
+                                const dashboardLink = document.createElement('a');
+                                dashboardLink.href = '/dashboard';
+                                dashboardLink.textContent = 'Dashboard';
+                                dashboardLink.className = "login-text";
+                                dashboardLinkContainer.appendChild(dashboardLink);
+                            }
+                        })
+                        .catch(error => console.error('Error checking isAdmin:', error));
+                })
+                .catch(error => console.error('Error fetching login status:', error));
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameId = urlParams.get('id');
+
+            if (gameId) {
+                fetch(`/fetchGameById/${gameId}`)
+                    .then(response => response.json())
+                    .then(game => {
+                        const card = document.createElement('div');
+                        card.className = 'game-card';
+
+                        const img = document.createElement('img');
+                        img.src = game.gameSplashImage;
+                        img.alt = game.gameName;
+
+                        const gameInfo = document.createElement('div');
+                        gameInfo.className = 'game-info';
+
+                        const gameName = document.createElement('div');
+                        gameName.className = 'game-name';
+                        gameName.textContent = game.gameName;
+
+                        const gamePrice = document.createElement('div');
+                        gamePrice.className = 'game-price';
+                        gamePrice.textContent = `${game.gamePrice}€`;
+
+                        const cartIconContainer = document.createElement('div');
+                        cartIconContainer.className = 'cart-icon-container';
+
+                        const cartIcon = document.createElement('img');
+                        cartIcon.src = 'images/cartIcon.png';
+                        cartIcon.alt = 'Cart';
+                        cartIcon.className = 'cart-icon';
+
+                        cartIcon.addEventListener('click', () => addToCart(game));
+
+                        cartIconContainer.appendChild(cartIcon);
+
+                        gameInfo.appendChild(gameName);
+                        gameInfo.appendChild(gamePrice);
+
+                        const textContainer = document.createElement('div');
+                        textContainer.style.marginLeft = '1em';
+                        textContainer.style.display = 'flex';
+                        textContainer.style.flexDirection = 'column';
+                        textContainer.style.justifyContent = 'center';
+
+                        const titleText = document.createElement('div');
+                        titleText.textContent = `Game title: ${game.gameName}`;
+                        titleText.style.fontSize = '1.5em';
+                        titleText.style.marginBottom = '0.5em';
+
+                        const priceText = document.createElement('div');
+                        priceText.textContent = `Game price: ${game.gamePrice}€`;
+                        priceText.style.fontSize = '1.5em';
+                        priceText.style.color = 'red';
+                        priceText.style.marginBottom = '0.5em';
+
+                        const addToCartButton = document.createElement('button');
+                        addToCartButton.className = 'add-to-cart-details-button';
+                        addToCartButton.textContent = 'Add to Cart';
+                        addToCartButton.addEventListener('click', () => addToCart(game));
+
+                        textContainer.appendChild(titleText);
+                        textContainer.appendChild(priceText);
+                        textContainer.appendChild(addToCartButton);
+
+                        const detailsContainer = document.createElement('div');
+                        detailsContainer.style.display = 'flex';
+                        detailsContainer.style.alignItems = 'center';
+
+                        card.appendChild(img);
+                        card.appendChild(cartIconContainer);
+                        card.appendChild(gameInfo);
+
+                        detailsContainer.appendChild(card);
+                        detailsContainer.appendChild(textContainer);
+
+                        gameDetails.appendChild(detailsContainer);
+                    })
+                    .catch(error => console.error('Error fetching game details:', error));
+            }
+
+            function addToCart(game) {
+                fetch('/addToCart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ game })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Game added to cart:', game);
+                            updateCartCount();
+                        } else {
+                            console.error('Failed to add game to cart');
+                        }
+                    })
+                    .catch(error => console.error('Error adding game to cart:', error));
+            }
+
+            function updateCartCount() {
+                fetch('/getCartCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        const cartCountElement = document.getElementById('cart-count');
+                        if (data && data.cartCount) {
+                            cartCountElement.textContent = data.cartCount;
+                            cartCountElement.style.display = 'inline';
+                        } else {
+                            cartCountElement.textContent = '0';
+                            cartCountElement.style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Error updating cart count:', error));
+            }
+
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>
